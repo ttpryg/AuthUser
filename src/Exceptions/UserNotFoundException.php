@@ -1,0 +1,21 @@
+<?php
+
+namespace Ttpryg\AuthUser\Exceptions;
+
+class UserNotFoundException extends AuthUserException
+{
+    public static function byId(int|string $id): self
+    {
+        return new self("User with ID '{$id}' was not found.");
+    }
+
+    public static function byEmail(string $email): self
+    {
+        return new self("User with email '{$email}' was not found.");
+    }
+
+    public static function byUsername(string $username): self
+    {
+        return new self("User with username '{$username}' was not found.");
+    }
+}
