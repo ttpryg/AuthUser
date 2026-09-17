@@ -12,6 +12,7 @@ use Ttpryg\AuthUser\Services\AuthenticationService;
 
 class AuthenticationServiceTest extends TestCase
 {
+    // POSITIVE CASE
     public function testSuccessfulAuthentication(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
@@ -29,6 +30,21 @@ class AuthenticationServiceTest extends TestCase
         $this->assertEquals($user, $result);
     }
 
+    // NEGATIVE CASE: User Not Found
+    public function testAuthenticationFailsOnNonExistentUser(): void
+    {
+        $repo = $this->createMock(UserRepositoryInterface::class);
+        $hasher = $this->createMock(PasswordHasherInterface::class);
+
+        $repo->method('findByEmail')->with('unknown@example.com')->willReturn(null);
+
+        $this->expectException(InvalidCredentialsException::class);
+
+        $service = new AuthenticationService($repo, $hasher);
+        $service->authenticate('unknown@example.com', 'password123');
+    }
+
+    // NEGATIVE CASE: Invalid Password
     public function testAuthenticationFailsOnWrongPassword(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
@@ -45,6 +61,7 @@ class AuthenticationServiceTest extends TestCase
         $service->authenticate('user@example.com', 'wrong_pass');
     }
 
+    // NEGATIVE CASE: Deactivated Account
     public function testAuthenticationFailsOnInactiveUser(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
