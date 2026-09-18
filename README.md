@@ -1,15 +1,16 @@
 # AuthUser Library
 
-`ttpryg/auth-user` is a framework-agnostic standalone PHP library for user management, authentication, token management, and password resetting.
+`ttpryg/auth-user` is a framework-agnostic standalone PHP library for user management, authentication, token management, password resetting, and **Role-Based Access Control (RBAC)**.
 
 ## 🌟 Key Features
 
 - **Framework Agnostic**: Works out of the box with any PHP application or framework (Vanilla PHP, Slim 4, Laravel, Symfony, CodeIgniter).
-- **PDO-based & ORM Agnostic**: Includes standard PDO repositories (`PdoUserRepository`, `PdoTokenRepository`) without tying your project to Eloquent or Doctrine.
+- **Full RBAC (Role-Based Access Control)**: Manage roles (`admin`, `editor`, `customer`) and permissions (`user:create`, `post:publish`).
+- **PDO-based & ORM Agnostic**: Includes standard PDO repositories (`PdoUserRepository`, `PdoTokenRepository`, `PdoRbacRepository`).
 - **Improved Database Schema**:
-  - `users` table with `updated_at`, `deleted_at` (soft deletes), composite indexing, and `metadata` JSON support.
-  - Dedicated `user_tokens` table for password resets, email verification, and refresh tokens.
-- **Domain Events**: Dispatches domain events (`UserRegisteredEvent`, `UserStatusChangedEvent`, `PasswordResetRequestedEvent`) for seamless integration with event listeners.
+  - `users`, `user_tokens`, `roles`, `permissions`, `user_roles`, `role_permissions` tables.
+  - Soft deletes, composite indexing, and `metadata` JSON support.
+- **Domain Events**: Dispatches domain events (`UserRegisteredEvent`, `UserStatusChangedEvent`, `PasswordResetRequestedEvent`).
 - **Security First**: Native password hashing using `password_hash()` with automatic rehash detection.
 
 ---
@@ -29,72 +30,77 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL DEFAULT NULL,
-    INDEX idx_user_login (email, is_active),
-    INDEX idx_username_login (username, is_active)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    INDEX idx_user_login (email, is_active)
+);
 
-CREATE TABLE IF NOT EXISTS user_tokens (
+CREATE TABLE IF NOT EXISTS roles (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    label VARCHAR(100) NOT NULL,
+    description VARCHAR(255) NULL
+);
+
+CREATE TABLE IF NOT EXISTS permissions (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    label VARCHAR(150) NOT NULL,
+    description VARCHAR(255) NULL
+);
+
+CREATE TABLE IF NOT EXISTS user_roles (
     user_id BIGINT UNSIGNED NOT NULL,
-    type VARCHAR(50) NOT NULL,
-    token VARCHAR(255) NOT NULL UNIQUE,
-    expires_at TIMESTAMP NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_user_token_type (user_id, type),
-    CONSTRAINT fk_user_tokens_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    role_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS role_permissions (
+    role_id BIGINT UNSIGNED NOT NULL,
+    permission_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (role_id, permission_id),
+    CONSTRAINT fk_role_permissions_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+    CONSTRAINT fk_role_permissions_permission FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
+);
 ```
 
 ---
 
-## 🚀 Quick Usage Example (Vanilla PDO / Slim)
+## 🚀 RBAC Usage Example
 
 ```php
 use PDO;
 use Ttpryg\AuthUser\Repositories\PdoUserRepository;
-use Ttpryg\AuthUser\Repositories\PdoTokenRepository;
-use Ttpryg\AuthUser\Security\NativePasswordHasher;
-use Ttpryg\AuthUser\Services\RegistrationService;
-use Ttpryg\AuthUser\Services\AuthenticationService;
+use Ttpryg\AuthUser\Repositories\PdoRbacRepository;
+use Ttpryg\AuthUser\Services\RbacManager;
 
-// 1. Initialize PDO
 $pdo = new PDO("mysql:host=localhost;dbname=my_db", "root", "secret");
-
-// 2. Setup Dependencies
 $userRepo = new PdoUserRepository($pdo);
-$tokenRepo = new PdoTokenRepository($pdo);
-$hasher = new NativePasswordHasher();
+$rbacRepo = new PdoRbacRepository($pdo);
+$rbacManager = new RbacManager($rbacRepo, $userRepo);
 
-// 3. User Registration
-$registrationService = new RegistrationService($userRepo, $hasher);
-$user = $registrationService->register(
-    email: 'johndoe@example.com',
-    plainPassword: 'SuperSecretPassword123!',
-    username: 'johndoe',
-    metadata: ['full_name' => 'John Doe']
-);
+// 1. Create Roles & Permissions
+$adminRole = $rbacManager->createRole('admin', 'Administrator');
+$deleteUserPerm = $rbacManager->createPermission('user:delete', 'Delete User Account');
 
-// 4. User Authentication
-$authService = new AuthenticationService($userRepo, $hasher);
-$authenticatedUser = $authService->authenticate('johndoe@example.com', 'SuperSecretPassword123!');
+// 2. Assign Permission to Role
+$rbacManager->assignPermissionToRole($adminRole, $deleteUserPerm);
 
-echo "Welcome back, " . $authenticatedUser->getEmail();
+// 3. Assign Role to User
+$user = $userRepo->findById(1);
+$rbacManager->assignRoleToUser($user->getId(), $adminRole);
+
+// 4. Load User RBAC & Check Access
+$user = $rbacManager->loadUserWithRbac($user);
+
+if ($user->hasRole('admin')) {
+    echo "User is an Admin!";
+}
+
+if ($user->hasPermission('user:delete')) {
+    echo "User can delete other accounts!";
+}
 ```
-
----
-
-## 🛠 Integration with Frameworks
-
-### Laravel
-Bind contracts to PDO / Repositories in a Service Provider:
-```php
-$this->app->singleton(UserRepositoryInterface::class, function ($app) {
-    return new PdoUserRepository(DB::connection()->getPdo());
-});
-```
-
-### Symfony / DI Containers
-Register services in `services.yaml` or PSR-11 container using standard interface bindings.
 
 ---
 
