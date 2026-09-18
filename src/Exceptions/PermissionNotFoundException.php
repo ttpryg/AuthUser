@@ -1,0 +1,16 @@
+<?php
+
+namespace Ttpryg\AuthUser\Exceptions;
+
+class PermissionNotFoundException extends AuthUserException
+{
+    public static function byName(string $name): self
+    {
+        return new self("Permission with name '{$name}' was not found.");
+    }
+
+    public static function byId(int|string $id): self
+    {
+        return new self("Permission with ID '{$id}' was not found.");
+    }
+}

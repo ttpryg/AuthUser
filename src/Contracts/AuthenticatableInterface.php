@@ -12,6 +12,10 @@ interface AuthenticatableInterface
     public function getPasswordHash(): string;
     public function isActive(): bool;
     public function getMetadata(): array;
+    public function getRoles(): array;
+    public function hasRole(string|array $roles): bool;
+    public function getPermissions(): array;
+    public function hasPermission(string $permission): bool;
     public function getCreatedAt(): ?DateTimeInterface;
     public function getUpdatedAt(): ?DateTimeInterface;
     public function getDeletedAt(): ?DateTimeInterface;

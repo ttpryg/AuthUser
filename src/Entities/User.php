@@ -14,6 +14,8 @@ class User implements AuthenticatableInterface
     private string $passwordHash;
     private bool $isActive;
     private array $metadata;
+    private array $roles; // Array of Role objects or role names
+    private array $permissions; // Array of Permission objects or permission names
     private ?DateTimeInterface $createdAt;
     private ?DateTimeInterface $updatedAt;
     private ?DateTimeInterface $deletedAt;
@@ -24,6 +26,8 @@ class User implements AuthenticatableInterface
         ?string $username = null,
         bool $isActive = true,
         array $metadata = [],
+        array $roles = [],
+        array $permissions = [],
         int|string|null $id = null,
         ?DateTimeInterface $createdAt = null,
         ?DateTimeInterface $updatedAt = null,
@@ -35,6 +39,8 @@ class User implements AuthenticatableInterface
         $this->passwordHash = $passwordHash;
         $this->isActive = $isActive;
         $this->metadata = $metadata;
+        $this->roles = $roles;
+        $this->permissions = $permissions;
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
         $this->updatedAt = $updatedAt ?? new DateTimeImmutable();
         $this->deletedAt = $deletedAt;
@@ -111,6 +117,55 @@ class User implements AuthenticatableInterface
         return $this;
     }
 
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
+    public function hasRole(string|array $roles): bool
+    {
+        $userRoleNames = array_map(function ($r) {
+            return $r instanceof Role ? $r->getName() : (string) $r;
+        }, $this->roles);
+
+        if (is_array($roles)) {
+            foreach ($roles as $role) {
+                if (in_array((string) $role, $userRoleNames, true)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return in_array((string) $roles, $userRoleNames, true);
+    }
+
+    public function getPermissions(): array
+    {
+        return $this->permissions;
+    }
+
+    public function setPermissions(array $permissions): self
+    {
+        $this->permissions = $permissions;
+        return $this;
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        $userPermissionNames = array_map(function ($p) {
+            return $p instanceof Permission ? $p->getName() : (string) $p;
+        }, $this->permissions);
+
+        return in_array($permission, $userPermissionNames, true);
+    }
+
     public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
@@ -140,12 +195,17 @@ class User implements AuthenticatableInterface
 
     public function toArray(): array
     {
+        $rolesArray = array_map(fn($r) => $r instanceof Role ? $r->toArray() : $r, $this->roles);
+        $permissionsArray = array_map(fn($p) => $p instanceof Permission ? $p->toArray() : $p, $this->permissions);
+
         return [
             'id' => $this->id,
             'username' => $this->username,
             'email' => $this->email,
             'is_active' => $this->isActive,
             'metadata' => $this->metadata,
+            'roles' => $rolesArray,
+            'permissions' => $permissionsArray,
             'created_at' => $this->createdAt?->format(DateTimeInterface::ATOM),
             'updated_at' => $this->updatedAt?->format(DateTimeInterface::ATOM),
             'deleted_at' => $this->deletedAt?->format(DateTimeInterface::ATOM),
