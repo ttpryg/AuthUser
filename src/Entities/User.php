@@ -26,9 +26,9 @@ class User implements AuthenticatableInterface
         ?string $username = null,
         bool $isActive = true,
         array $metadata = [],
+        int|string|null $id = null,
         array $roles = [],
         array $permissions = [],
-        int|string|null $id = null,
         ?DateTimeInterface $createdAt = null,
         ?DateTimeInterface $updatedAt = null,
         ?DateTimeInterface $deletedAt = null

@@ -132,7 +132,11 @@ class PdoRbacRepository implements RbacRepositoryInterface
 
     public function assignRoleToUser(int|string $userId, int|string $roleId): bool
     {
-        $sql = "INSERT IGNORE INTO {$this->userRolesTable} (user_id, role_id) VALUES (:user_id, :role_id)";
+        $ignoreKeyword = ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite')
+            ? 'INSERT OR IGNORE'
+            : 'INSERT IGNORE';
+
+        $sql = "{$ignoreKeyword} INTO {$this->userRolesTable} (user_id, role_id) VALUES (:user_id, :role_id)";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute(['user_id' => $userId, 'role_id' => $roleId]);
     }
@@ -163,7 +167,11 @@ class PdoRbacRepository implements RbacRepositoryInterface
 
     public function assignPermissionToRole(int|string $roleId, int|string $permissionId): bool
     {
-        $sql = "INSERT IGNORE INTO {$this->rolePermissionsTable} (role_id, permission_id) VALUES (:role_id, :permission_id)";
+        $ignoreKeyword = ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite')
+            ? 'INSERT OR IGNORE'
+            : 'INSERT IGNORE';
+
+        $sql = "{$ignoreKeyword} INTO {$this->rolePermissionsTable} (role_id, permission_id) VALUES (:role_id, :permission_id)";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute(['role_id' => $roleId, 'permission_id' => $permissionId]);
     }
