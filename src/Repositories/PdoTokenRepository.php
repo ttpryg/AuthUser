@@ -38,13 +38,15 @@ class PdoTokenRepository implements TokenRepositoryInterface
 
     public function verifyToken(string $token, string $type): ?object
     {
+        $now = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
         $sql = "SELECT * FROM {$this->table} 
-                WHERE token = :token AND type = :type AND expires_at > NOW()";
+                WHERE token = :token AND type = :type AND expires_at > :now";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             'token' => $token,
             'type' => $type,
+            'now' => $now,
         ]);
 
         $data = $stmt->fetch(PDO::FETCH_OBJ);
