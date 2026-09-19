@@ -8,7 +8,7 @@ use Ttpryg\AuthUser\Entities\User;
 
 class UserEntityTest extends TestCase
 {
-    public function testUserCreationAndGetters(): void
+    public function test_user_creation_and_getters(): void
     {
         $user = new User(
             email: 'user@example.com',
@@ -31,7 +31,7 @@ class UserEntityTest extends TestCase
         $this->assertNull($user->getDeletedAt());
     }
 
-    public function testUserToArray(): void
+    public function test_user_to_array(): void
     {
         $user = new User(
             email: 'user@example.com',

@@ -10,6 +10,7 @@ use Ttpryg\AuthUser\Repositories\PdoUserRepository;
 class PdoUserRepositoryTest extends TestCase
 {
     private PDO $pdo;
+
     private PdoUserRepository $repository;
 
     protected function setUp(): void
@@ -18,7 +19,7 @@ class PdoUserRepositoryTest extends TestCase
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Create in-memory SQLite schema
-        $this->pdo->exec("
+        $this->pdo->exec('
             CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username VARCHAR(50) NULL UNIQUE,
@@ -30,12 +31,12 @@ class PdoUserRepositoryTest extends TestCase
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 deleted_at DATETIME NULL DEFAULT NULL
             )
-        ");
+        ');
 
         $this->repository = new PdoUserRepository($this->pdo);
     }
 
-    public function testSaveAndFindUser(): void
+    public function test_save_and_find_user(): void
     {
         $user = new User(
             email: 'john@example.com',
@@ -63,7 +64,7 @@ class PdoUserRepositoryTest extends TestCase
         $this->assertEquals($savedUser->getId(), $foundByUsername->getId());
     }
 
-    public function testSoftDeleteAndRestore(): void
+    public function test_soft_delete_and_restore(): void
     {
         $user = new User('jane@example.com', 'hash', 'jane');
         $savedUser = $this->repository->save($user);

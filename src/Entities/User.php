@@ -9,15 +9,25 @@ use Ttpryg\AuthUser\Contracts\AuthenticatableInterface;
 class User implements AuthenticatableInterface
 {
     private int|string|null $id;
+
     private ?string $username;
+
     private string $email;
+
     private string $passwordHash;
+
     private bool $isActive;
+
     private array $metadata;
+
     private array $roles; // Array of Role objects or role names
+
     private array $permissions; // Array of Permission objects or permission names
+
     private ?DateTimeInterface $createdAt;
+
     private ?DateTimeInterface $updatedAt;
+
     private ?DateTimeInterface $deletedAt;
 
     public function __construct(
@@ -41,8 +51,8 @@ class User implements AuthenticatableInterface
         $this->metadata = $metadata;
         $this->roles = $roles;
         $this->permissions = $permissions;
-        $this->createdAt = $createdAt ?? new DateTimeImmutable();
-        $this->updatedAt = $updatedAt ?? new DateTimeImmutable();
+        $this->createdAt = $createdAt ?? new DateTimeImmutable;
+        $this->updatedAt = $updatedAt ?? new DateTimeImmutable;
         $this->deletedAt = $deletedAt;
     }
 
@@ -59,6 +69,7 @@ class User implements AuthenticatableInterface
     public function setId(int|string $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -70,6 +81,7 @@ class User implements AuthenticatableInterface
     public function setUsername(?string $username): self
     {
         $this->username = $username;
+
         return $this;
     }
 
@@ -81,6 +93,7 @@ class User implements AuthenticatableInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -92,6 +105,7 @@ class User implements AuthenticatableInterface
     public function setPasswordHash(string $passwordHash): self
     {
         $this->passwordHash = $passwordHash;
+
         return $this;
     }
 
@@ -103,6 +117,7 @@ class User implements AuthenticatableInterface
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+
         return $this;
     }
 
@@ -114,6 +129,7 @@ class User implements AuthenticatableInterface
     public function setMetadata(array $metadata): self
     {
         $this->metadata = $metadata;
+
         return $this;
     }
 
@@ -125,6 +141,7 @@ class User implements AuthenticatableInterface
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
         return $this;
     }
 
@@ -140,6 +157,7 @@ class User implements AuthenticatableInterface
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -154,6 +172,7 @@ class User implements AuthenticatableInterface
     public function setPermissions(array $permissions): self
     {
         $this->permissions = $permissions;
+
         return $this;
     }
 
@@ -179,6 +198,7 @@ class User implements AuthenticatableInterface
     public function setUpdatedAt(DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 
@@ -190,13 +210,14 @@ class User implements AuthenticatableInterface
     public function setDeletedAt(?DateTimeInterface $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
+
         return $this;
     }
 
     public function toArray(): array
     {
-        $rolesArray = array_map(fn($r) => $r instanceof Role ? $r->toArray() : $r, $this->roles);
-        $permissionsArray = array_map(fn($p) => $p instanceof Permission ? $p->toArray() : $p, $this->permissions);
+        $rolesArray = array_map(fn ($r) => $r instanceof Role ? $r->toArray() : $r, $this->roles);
+        $permissionsArray = array_map(fn ($p) => $p instanceof Permission ? $p->toArray() : $p, $this->permissions);
 
         return [
             'id' => $this->id,

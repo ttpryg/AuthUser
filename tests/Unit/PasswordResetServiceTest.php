@@ -16,7 +16,7 @@ use Ttpryg\AuthUser\Services\PasswordResetService;
 class PasswordResetServiceTest extends TestCase
 {
     // POSITIVE CASE: Request Reset Token
-    public function testSuccessfulResetTokenRequest(): void
+    public function test_successful_reset_token_request(): void
     {
         $userRepo = $this->createMock(UserRepositoryInterface::class);
         $tokenRepo = $this->createMock(TokenRepositoryInterface::class);
@@ -45,7 +45,7 @@ class PasswordResetServiceTest extends TestCase
     }
 
     // NEGATIVE CASE: Request Token for Non-Existent Email
-    public function testRequestResetTokenFailsOnUnknownEmail(): void
+    public function test_request_reset_token_fails_on_unknown_email(): void
     {
         $userRepo = $this->createMock(UserRepositoryInterface::class);
         $tokenRepo = $this->createMock(TokenRepositoryInterface::class);
@@ -60,7 +60,7 @@ class PasswordResetServiceTest extends TestCase
     }
 
     // POSITIVE CASE: Reset Password
-    public function testSuccessfulPasswordReset(): void
+    public function test_successful_password_reset(): void
     {
         $userRepo = $this->createMock(UserRepositoryInterface::class);
         $tokenRepo = $this->createMock(TokenRepositoryInterface::class);
@@ -87,7 +87,7 @@ class PasswordResetServiceTest extends TestCase
     }
 
     // NEGATIVE CASE: Reset Password with Expired or Invalid Token
-    public function testResetPasswordFailsOnInvalidToken(): void
+    public function test_reset_password_fails_on_invalid_token(): void
     {
         $userRepo = $this->createMock(UserRepositoryInterface::class);
         $tokenRepo = $this->createMock(TokenRepositoryInterface::class);

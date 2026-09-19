@@ -25,7 +25,7 @@ class ProfileManager
         ?array $metadata = null
     ): bool {
         $user = $this->userRepository->findById($userId);
-        if (!$user) {
+        if (! $user) {
             throw UserNotFoundException::byId($userId);
         }
 
@@ -55,22 +55,23 @@ class ProfileManager
     public function changePassword(int|string $userId, string $currentPassword, string $newPassword): bool
     {
         $user = $this->userRepository->findById($userId);
-        if (!$user) {
+        if (! $user) {
             throw UserNotFoundException::byId($userId);
         }
 
-        if (!$this->passwordHasher->verify($currentPassword, $user->getPasswordHash())) {
-            throw new InvalidCredentialsException("Current password does not match.");
+        if (! $this->passwordHasher->verify($currentPassword, $user->getPasswordHash())) {
+            throw new InvalidCredentialsException('Current password does not match.');
         }
 
         $user->setPasswordHash($this->passwordHasher->hash($newPassword));
+
         return $this->userRepository->update($user);
     }
 
     public function toggleStatus(int|string $userId, bool $isActive): bool
     {
         $user = $this->userRepository->findById($userId);
-        if (!$user) {
+        if (! $user) {
             throw UserNotFoundException::byId($userId);
         }
 
@@ -92,7 +93,7 @@ class ProfileManager
     public function deleteAccount(int|string $userId, bool $softDelete = true): bool
     {
         $user = $this->userRepository->findById($userId, true);
-        if (!$user) {
+        if (! $user) {
             throw UserNotFoundException::byId($userId);
         }
 

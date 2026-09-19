@@ -16,7 +16,7 @@ use Ttpryg\AuthUser\Services\ProfileManager;
 class ProfileManagerTest extends TestCase
 {
     // POSITIVE CASE: Update Profile
-    public function testSuccessfulProfileUpdate(): void
+    public function test_successful_profile_update(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -34,7 +34,7 @@ class ProfileManagerTest extends TestCase
     }
 
     // NEGATIVE CASE: Update Email already taken by another user
-    public function testUpdateProfileFailsWhenEmailTaken(): void
+    public function test_update_profile_fails_when_email_taken(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -52,7 +52,7 @@ class ProfileManagerTest extends TestCase
     }
 
     // POSITIVE CASE: Change Password
-    public function testSuccessfulPasswordChange(): void
+    public function test_successful_password_change(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -72,7 +72,7 @@ class ProfileManagerTest extends TestCase
     }
 
     // NEGATIVE CASE: Change Password with Wrong Current Password
-    public function testChangePasswordFailsOnWrongCurrentPassword(): void
+    public function test_change_password_fails_on_wrong_current_password(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -89,7 +89,7 @@ class ProfileManagerTest extends TestCase
     }
 
     // POSITIVE CASE: Toggle Status and Dispatch Event
-    public function testToggleStatusDispatchesEvent(): void
+    public function test_toggle_status_dispatches_event(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -111,7 +111,7 @@ class ProfileManagerTest extends TestCase
     }
 
     // NEGATIVE CASE: User Not Found
-    public function testOperationsFailOnNonExistentUser(): void
+    public function test_operations_fail_on_non_existent_user(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
