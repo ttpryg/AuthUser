@@ -8,9 +8,13 @@ use DateTimeInterface;
 class Role
 {
     private int|string|null $id;
+
     private string $name;
+
     private string $label;
+
     private ?string $description;
+
     private ?DateTimeInterface $createdAt;
 
     public function __construct(
@@ -24,7 +28,7 @@ class Role
         $this->name = $name;
         $this->label = $label;
         $this->description = $description;
-        $this->createdAt = $createdAt ?? new DateTimeImmutable();
+        $this->createdAt = $createdAt ?? new DateTimeImmutable;
     }
 
     public function getId(): int|string|null
@@ -35,6 +39,7 @@ class Role
     public function setId(int|string $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 

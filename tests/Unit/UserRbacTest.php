@@ -12,7 +12,7 @@ use Ttpryg\AuthUser\Services\RbacManager;
 class UserRbacTest extends TestCase
 {
     // POSITIVE CASE: Check user roles and permissions
-    public function testUserHasRoleAndPermission(): void
+    public function test_user_has_role_and_permission(): void
     {
         $roleAdmin = new Role('admin', 'Administrator');
         $roleEditor = new Role('editor', 'Editor');
@@ -38,7 +38,7 @@ class UserRbacTest extends TestCase
     }
 
     // NEGATIVE CASE: Authorization throws UnauthorizedException when role is missing
-    public function testAuthorizeRoleFailsOnMissingRole(): void
+    public function test_authorize_role_fails_on_missing_role(): void
     {
         $user = new User('customer@example.com', 'hash', roles: [new Role('customer', 'Customer')]);
         $rbacManager = new RbacManager($this->createMock(\Ttpryg\AuthUser\Contracts\RbacRepositoryInterface::class));
@@ -48,7 +48,7 @@ class UserRbacTest extends TestCase
     }
 
     // NEGATIVE CASE: Authorization throws UnauthorizedException when permission is missing
-    public function testAuthorizePermissionFailsOnMissingPermission(): void
+    public function test_authorize_permission_fails_on_missing_permission(): void
     {
         $user = new User('customer@example.com', 'hash', permissions: [new Permission('post:read', 'Read Post')]);
         $rbacManager = new RbacManager($this->createMock(\Ttpryg\AuthUser\Contracts\RbacRepositoryInterface::class));

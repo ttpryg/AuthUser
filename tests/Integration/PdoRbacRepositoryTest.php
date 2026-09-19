@@ -4,7 +4,6 @@ namespace Ttpryg\AuthUser\Tests\Integration;
 
 use PDO;
 use PHPUnit\Framework\TestCase;
-use Ttpryg\AuthUser\Entities\Permission;
 use Ttpryg\AuthUser\Entities\Role;
 use Ttpryg\AuthUser\Entities\User;
 use Ttpryg\AuthUser\Repositories\PdoRbacRepository;
@@ -14,8 +13,11 @@ use Ttpryg\AuthUser\Services\RbacManager;
 class PdoRbacRepositoryTest extends TestCase
 {
     private PDO $pdo;
+
     private PdoRbacRepository $rbacRepository;
+
     private PdoUserRepository $userRepository;
+
     private RbacManager $rbacManager;
 
     protected function setUp(): void
@@ -24,7 +26,7 @@ class PdoRbacRepositoryTest extends TestCase
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // SQLite memory tables
-        $this->pdo->exec("
+        $this->pdo->exec('
             CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username VARCHAR(50) NULL UNIQUE,
@@ -64,7 +66,7 @@ class PdoRbacRepositoryTest extends TestCase
                 permission_id INT NOT NULL,
                 PRIMARY KEY (role_id, permission_id)
             );
-        ");
+        ');
 
         $this->rbacRepository = new PdoRbacRepository($this->pdo);
         $this->userRepository = new PdoUserRepository($this->pdo);
@@ -72,7 +74,7 @@ class PdoRbacRepositoryTest extends TestCase
     }
 
     // POSITIVE CASE: Full RBAC Integration Flow
-    public function testFullRbacFlow(): void
+    public function test_full_rbac_flow(): void
     {
         // 1. Create User
         $user = new User('editor@example.com', 'hash', 'editor_john');

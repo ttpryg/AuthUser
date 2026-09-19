@@ -11,9 +11,13 @@ use Ttpryg\AuthUser\Entities\Role;
 class PdoRbacRepository implements RbacRepositoryInterface
 {
     private PDO $pdo;
+
     private string $rolesTable;
+
     private string $permissionsTable;
+
     private string $userRolesTable;
+
     private string $rolePermissionsTable;
 
     public function __construct(
@@ -44,6 +48,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
         ]);
 
         $role->setId($this->pdo->lastInsertId());
+
         return $role;
     }
 
@@ -54,6 +59,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
         $stmt->execute(['name' => $name]);
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
         return $data ? $this->mapToRoleEntity($data) : null;
     }
 
@@ -64,6 +70,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
         $stmt->execute(['id' => $id]);
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
         return $data ? $this->mapToRoleEntity($data) : null;
     }
 
@@ -94,6 +101,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
         ]);
 
         $permission->setId($this->pdo->lastInsertId());
+
         return $permission;
     }
 
@@ -104,6 +112,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
         $stmt->execute(['name' => $name]);
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
         return $data ? $this->mapToPermissionEntity($data) : null;
     }
 
@@ -114,6 +123,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
         $stmt->execute(['id' => $id]);
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
         return $data ? $this->mapToPermissionEntity($data) : null;
     }
 
@@ -138,6 +148,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
 
         $sql = "{$ignoreKeyword} INTO {$this->userRolesTable} (user_id, role_id) VALUES (:user_id, :role_id)";
         $stmt = $this->pdo->prepare($sql);
+
         return $stmt->execute(['user_id' => $userId, 'role_id' => $roleId]);
     }
 
@@ -145,6 +156,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
     {
         $sql = "DELETE FROM {$this->userRolesTable} WHERE user_id = :user_id AND role_id = :role_id";
         $stmt = $this->pdo->prepare($sql);
+
         return $stmt->execute(['user_id' => $userId, 'role_id' => $roleId]);
     }
 
@@ -173,6 +185,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
 
         $sql = "{$ignoreKeyword} INTO {$this->rolePermissionsTable} (role_id, permission_id) VALUES (:role_id, :permission_id)";
         $stmt = $this->pdo->prepare($sql);
+
         return $stmt->execute(['role_id' => $roleId, 'permission_id' => $permissionId]);
     }
 
@@ -180,6 +193,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
     {
         $sql = "DELETE FROM {$this->rolePermissionsTable} WHERE role_id = :role_id AND permission_id = :permission_id";
         $stmt = $this->pdo->prepare($sql);
+
         return $stmt->execute(['role_id' => $roleId, 'permission_id' => $permissionId]);
     }
 
@@ -225,7 +239,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
             label: $data['label'],
             description: $data['description'] ?? null,
             id: $data['id'],
-            createdAt: !empty($data['created_at']) ? new DateTimeImmutable($data['created_at']) : null
+            createdAt: ! empty($data['created_at']) ? new DateTimeImmutable($data['created_at']) : null
         );
     }
 
@@ -236,7 +250,7 @@ class PdoRbacRepository implements RbacRepositoryInterface
             label: $data['label'],
             description: $data['description'] ?? null,
             id: $data['id'],
-            createdAt: !empty($data['created_at']) ? new DateTimeImmutable($data['created_at']) : null
+            createdAt: ! empty($data['created_at']) ? new DateTimeImmutable($data['created_at']) : null
         );
     }
 }

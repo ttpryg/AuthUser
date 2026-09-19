@@ -13,7 +13,7 @@ use Ttpryg\AuthUser\Services\AuthenticationService;
 class AuthenticationServiceTest extends TestCase
 {
     // POSITIVE CASE
-    public function testSuccessfulAuthentication(): void
+    public function test_successful_authentication(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -31,7 +31,7 @@ class AuthenticationServiceTest extends TestCase
     }
 
     // NEGATIVE CASE: User Not Found
-    public function testAuthenticationFailsOnNonExistentUser(): void
+    public function test_authentication_fails_on_non_existent_user(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -45,7 +45,7 @@ class AuthenticationServiceTest extends TestCase
     }
 
     // NEGATIVE CASE: Invalid Password
-    public function testAuthenticationFailsOnWrongPassword(): void
+    public function test_authentication_fails_on_wrong_password(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -62,7 +62,7 @@ class AuthenticationServiceTest extends TestCase
     }
 
     // NEGATIVE CASE: Deactivated Account
-    public function testAuthenticationFailsOnInactiveUser(): void
+    public function test_authentication_fails_on_inactive_user(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);

@@ -22,13 +22,13 @@ class PasswordResetService
         private ?AuthConfig $config = null,
         private ?EventDispatcherInterface $eventDispatcher = null
     ) {
-        $this->config = $config ?? new AuthConfig();
+        $this->config = $config ?? new AuthConfig;
     }
 
     public function requestResetToken(string $email): string
     {
         $user = $this->userRepository->findByEmail($email);
-        if (!$user) {
+        if (! $user) {
             throw UserNotFoundException::byEmail($email);
         }
 
@@ -51,12 +51,12 @@ class PasswordResetService
     public function resetPassword(string $token, string $newPassword): bool
     {
         $tokenObj = $this->tokenRepository->verifyToken($token, self::TOKEN_TYPE);
-        if (!$tokenObj) {
-            throw new TokenInvalidException();
+        if (! $tokenObj) {
+            throw new TokenInvalidException;
         }
 
         $user = $this->userRepository->findById($tokenObj->user_id);
-        if (!$user) {
+        if (! $user) {
             throw UserNotFoundException::byId($tokenObj->user_id);
         }
 

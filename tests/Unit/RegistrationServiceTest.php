@@ -14,7 +14,7 @@ use Ttpryg\AuthUser\Services\RegistrationService;
 class RegistrationServiceTest extends TestCase
 {
     // POSITIVE CASE
-    public function testSuccessfulRegistration(): void
+    public function test_successful_registration(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -32,6 +32,7 @@ class RegistrationServiceTest extends TestCase
             ->method('save')
             ->willReturnCallback(function (User $user) {
                 $user->setId(10);
+
                 return $user;
             });
 
@@ -49,7 +50,7 @@ class RegistrationServiceTest extends TestCase
     }
 
     // NEGATIVE CASE: Duplicate Email
-    public function testRegistrationThrowsExceptionIfEmailExists(): void
+    public function test_registration_throws_exception_if_email_exists(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);
@@ -64,7 +65,7 @@ class RegistrationServiceTest extends TestCase
     }
 
     // NEGATIVE CASE: Duplicate Username
-    public function testRegistrationThrowsExceptionIfUsernameExists(): void
+    public function test_registration_throws_exception_if_username_exists(): void
     {
         $repo = $this->createMock(UserRepositoryInterface::class);
         $hasher = $this->createMock(PasswordHasherInterface::class);

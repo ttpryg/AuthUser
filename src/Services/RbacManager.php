@@ -10,7 +10,6 @@ use Ttpryg\AuthUser\Entities\User;
 use Ttpryg\AuthUser\Exceptions\PermissionNotFoundException;
 use Ttpryg\AuthUser\Exceptions\RoleNotFoundException;
 use Ttpryg\AuthUser\Exceptions\UnauthorizedException;
-use Ttpryg\AuthUser\Exceptions\UserNotFoundException;
 
 class RbacManager
 {
@@ -47,7 +46,7 @@ class RbacManager
                 ? $this->rbacRepository->findRoleById($role)
                 : $this->rbacRepository->findRoleByName((string) $role);
 
-            if (!$found) {
+            if (! $found) {
                 throw RoleNotFoundException::byName((string) $role);
             }
             $roleId = $found->getId();
@@ -64,7 +63,7 @@ class RbacManager
                 ? $this->rbacRepository->findRoleById($role)
                 : $this->rbacRepository->findRoleByName((string) $role);
 
-            if (!$found) {
+            if (! $found) {
                 throw RoleNotFoundException::byName((string) $role);
             }
             $roleId = $found->getId();
@@ -81,7 +80,7 @@ class RbacManager
                 ? $this->rbacRepository->findRoleById($role)
                 : $this->rbacRepository->findRoleByName((string) $role);
 
-            if (!$found) {
+            if (! $found) {
                 throw RoleNotFoundException::byName((string) $role);
             }
             $roleId = $found->getId();
@@ -93,7 +92,7 @@ class RbacManager
                 ? $this->rbacRepository->findPermissionById($permission)
                 : $this->rbacRepository->findPermissionByName((string) $permission);
 
-            if (!$found) {
+            if (! $found) {
                 throw PermissionNotFoundException::byName((string) $permission);
             }
             $permId = $found->getId();
@@ -119,14 +118,14 @@ class RbacManager
 
     public function authorizeRole(User $user, string|array $requiredRole): void
     {
-        if (!$user->hasRole($requiredRole)) {
+        if (! $user->hasRole($requiredRole)) {
             throw UnauthorizedException::missingRole($requiredRole);
         }
     }
 
     public function authorizePermission(User $user, string $requiredPermission): void
     {
-        if (!$user->hasPermission($requiredPermission)) {
+        if (! $user->hasPermission($requiredPermission)) {
             throw UnauthorizedException::missingPermission($requiredPermission);
         }
     }

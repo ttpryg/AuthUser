@@ -11,10 +11,10 @@ class NativePasswordHasherTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->hasher = new NativePasswordHasher();
+        $this->hasher = new NativePasswordHasher;
     }
 
-    public function testHashAndVerify(): void
+    public function test_hash_and_verify(): void
     {
         $password = 'Secret123!';
         $hash = $this->hasher->hash($password);
@@ -25,7 +25,7 @@ class NativePasswordHasherTest extends TestCase
         $this->assertFalse($this->hasher->verify('WrongPassword', $hash));
     }
 
-    public function testNeedsRehash(): void
+    public function test_needs_rehash(): void
     {
         $password = 'Secret123!';
         $hash = $this->hasher->hash($password);

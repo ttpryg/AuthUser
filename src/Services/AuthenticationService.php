@@ -22,18 +22,18 @@ class AuthenticationService
             ? $this->userRepository->findByEmail($identity)
             : $this->userRepository->findByUsername($identity);
 
-        if (!$user) {
-            throw new InvalidCredentialsException();
+        if (! $user) {
+            throw new InvalidCredentialsException;
         }
 
         // Verify password
-        if (!$this->passwordHasher->verify($plainPassword, $user->getPasswordHash())) {
-            throw new InvalidCredentialsException();
+        if (! $this->passwordHasher->verify($plainPassword, $user->getPasswordHash())) {
+            throw new InvalidCredentialsException;
         }
 
         // Check active status
-        if (!$user->isActive()) {
-            throw new UserInactiveException();
+        if (! $user->isActive()) {
+            throw new UserInactiveException;
         }
 
         // Rehash password if algorithm/cost changed
